@@ -3,10 +3,14 @@ using UnityStandardAssets.Characters.ThirdPerson;
 
 public class CameraControl : MonoBehaviour
 {
-    [SerializeField] Transform target;
-    [SerializeField] float distanceX = 5;
-    [SerializeField] float distanceY = 5;
-    [SerializeField] float distanceZ = 5;
+    [SerializeField]
+    Transform target;
+    [SerializeField]
+    float distanceX = 5;
+    [SerializeField]
+    float distanceY = 5;
+    [SerializeField]
+    float distanceZ = 5;
     private Camera m_Camera;
     private Vector3 m_Move;
 
