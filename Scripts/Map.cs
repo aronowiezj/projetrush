@@ -50,6 +50,26 @@ public class Map : MonoBehaviour
                         }
                     }
                     
+                    //rotation non optimisée
+                    int[,] structOrientee = new int[structActuelle.GetLength(1), structActuelle.GetLength(0)];
+                    int m = 0, n = 0;
+                    for (int k = structActuelle.GetLength(0)-1; k>=0; k--)
+                    {
+                        for (int l = 0; l < structActuelle.GetLength(1)-1; l++)
+                        {
+                            Case tmp = new Case();
+                            structOrientee[n, m] = structActuelle[k, l];
+                            if (structActuelle[k, l] == 0)
+                            {
+                                tmp.setVoidCase(true);
+                            }
+                            map[i + n, j + m] = tmp;
+                            n++;
+                        }
+                        n = 0;
+                        m++;
+                    }
+                    
                     int detailScale = 20;
                     int heightScale = 25;
                     int y = (int)(Mathf.PerlinNoise((i + offset) / detailScale, (j + offset) / detailScale) * heightScale);
