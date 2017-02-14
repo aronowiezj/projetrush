@@ -2,40 +2,55 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Map : MonoBehaviour
+public class Map
 {
-
-    static int taille = 52;
-    Case[,] map = new Case[taille, taille];
     Structure stru = new Structure();
+    Case[,] map;
 
-    // Use this for initialization
-    void Start()
+    public Map(int seed, int width, int depth, int heightScale, float detailScale)
     {
-        Random.InitState(2555);
-        int offset = 1000000000;
-        
+        Random.InitState(seed);
+        int offset = Random.Range(0, 1000);
 
+        map = new Case[width, depth];
 
-        for (int i = 0; i < taille; i++)
+        for (int i = 0; i < width; i++)
         {
-            for (int j = 0; j < taille; j++)
+            for (int j = 0; j < depth; j++)
             {
                 if (map[i, j] == null)
                 {
                     int structureChoisie = (int)(Random.Range(1, 9));
-                    while (stru.listStruct[structureChoisie].GetLength(0) + j > taille || stru.listStruct[structureChoisie].GetLength(0) + i > taille)
+                    while (stru.listStruct[structureChoisie].GetLength(0) + j > depth || stru.listStruct[structureChoisie].GetLength(0) + i > width)
                         structureChoisie = (int)(Random.Range(1, 9));
-                    // Debug.Log("Structure numero : "+structureChoisie);
+
                     int[,] structActuelle;
                     stru.listStruct.TryGetValue(structureChoisie, out structActuelle);
                     structActuelle = stru.listStruct[structureChoisie];
 
-                    for (int k = 0; k < structActuelle.GetLength(0); k++)
+                    int[,] structOrientee = new int[structActuelle.GetLength(1), structActuelle.GetLength(0)];
+
+                    for (int nombrerotations = 0; nombrerotations < Random.Range(0, 4); nombrerotations++)
                     {
-                        for (int l = 0; l < structActuelle.GetLength(1); l++)
+
+                        int m = 0, n = 0;
+                        for (int k = structActuelle.GetLength(0) - 1; k >= 0; k--)
                         {
-                            if (structActuelle[k, l] == 0)
+                            for (int l = 0; l < structActuelle.GetLength(1) - 1; l++)
+                            {
+                                structOrientee[n, m] = structActuelle[k, l];
+                                n++;
+                            }
+                            n = 0;
+                            m++;
+                        }
+                    }
+
+                    for (int k = 0; k < structOrientee.GetLength(0); k++)
+                    {
+                        for (int l = 0; l < structOrientee.GetLength(1); l++)
+                        {
+                            if (structOrientee[k, l] == 0)
                             {
                                 map[i + k, j + l] = new Case();
                                 map[i + k, j + l].setVoidCase(true);
@@ -44,58 +59,19 @@ public class Map : MonoBehaviour
                             {
                                 map[i + k, j + l] = new Case();
                             }
-
-                            // Debug.Log("seed " + seed);
-
                         }
                     }
-                    
-                    //rotation non optimisée
-                    int[,] structOrientee = new int[structActuelle.GetLength(1), structActuelle.GetLength(0)];
-                    int m = 0, n = 0;
-                    for (int k = structActuelle.GetLength(0)-1; k>=0; k--)
-                    {
-                        for (int l = 0; l < structActuelle.GetLength(1)-1; l++)
-                        {
-                            Case tmp = new Case();
-                            structOrientee[n, m] = structActuelle[k, l];
-                            if (structActuelle[k, l] == 0)
-                            {
-                                tmp.setVoidCase(true);
-                            }
-                            map[i + n, j + m] = tmp;
-                            n++;
-                        }
-                        n = 0;
-                        m++;
-                    }
-                    
-                    int detailScale = 20;
-                    int heightScale = 25;
-                    int y = (int)(Mathf.PerlinNoise((i + offset) / detailScale, (j + offset) / detailScale) * heightScale);
-                    // Debug.Log("hauteur " + Mathf.PerlinNoise((i + offset) / detailScale, (j + offset) / detailScale));
-                    Debug.Log("hauteur " + Mathf.PerlinNoise(9000000000000000000, 10000)*100);
-                    Debug.Log("hauteur " + Mathf.PerlinNoise(10000000000000, 1));
 
-                    map[i, j].setY(y);
+
                 }
+                int y = (int)(Mathf.PerlinNoise((i + offset) / detailScale, (j + offset) / detailScale) * heightScale);
+                map[i, j].setY(y);
             }
-        }
-
-        for (int i = 0; i < taille; i++)
-        {
-            for (int j = 0; j < taille; j++)
-            {
-                if (map[i, j].isVoid()) { }
-
-            }
-            // Debug.Log("\n");
         }
     }
 
-    // Update is called once per frame
-    void Update()
+    public Case[,] getGrid()
     {
-
+        return map;
     }
 }
