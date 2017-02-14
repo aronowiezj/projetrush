@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class Case {
 
-    [Range(0,5)][SerializeField] int hauteur;
+    [Range(0,5)][SerializeField] int y;
+
     Terrain typeTerrain;
     bool voidCase=false;
     bool init = false;
@@ -26,6 +27,14 @@ public class Case {
 	void Update () {
 		
 	}
+    public void setY(int y)
+    {
+        this.y = y;
+    }
+    public int getY()
+    {
+        return y;
+    }
 
     public bool isVoid()
     {
